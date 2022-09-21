@@ -4,11 +4,12 @@ import { CreateAuthDto } from './dto/create-auth.dto';
 import { UpdateAuthDto } from './dto/update-auth.dto';
 import { ApiOperation, ApiTags } from "@nestjs/swagger";
 
+
+@ApiTags('auth')
 @Controller({
   path: 'auth',
   version: '1'
 })
-@ApiTags('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
@@ -18,16 +19,34 @@ export class AuthController {
   })
   createCaptcha(@Req() req,@Res() res,@Session() session){
     const captcha = this.authService.createCaptcha();
-    console.log(captcha);
     session.captcha = captcha.text;
     res.type('image/svg+xml');
     res.send(captcha.data);
   }
 
-  @Post()
-  create(@Body() createAuthDto: CreateAuthDto) {
-    return this.authService.create(createAuthDto);
+  @Post('verifyCaptcha')
+  @ApiOperation({
+    summary: '验证验证码'
+  })
+  verifyCaptcha(@Session() session, @Body() body){
+    console.log(session,body);
+    if (session.captcha.toLocaleLowerCase() === body?.captcha?.toLocaleLowerCase()){
+      return {
+        status: 200,
+        message: '验证码正确'
+      }
+    }else {
+      return {
+        status: 400,
+        message: '验证码正确'
+      }
+    }
   }
+
+  // @Post()
+  // create(@Body() createAuthDto: CreateAuthDto) {
+  //   return this.authService.create(createAuthDto);
+  // }
 
   @Get()
   findAll() {
