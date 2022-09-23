@@ -1,17 +1,29 @@
 import { Injectable } from "@nestjs/common";
 import { CreateUserDto } from "./dto/create-user.dto";
 import { UpdateUserDto } from "./dto/update-user.dto";
-import svgCaptcha from "svg-captcha"
+import {InjectRepository} from "@nestjs/typeorm";
+import {User} from "./entities/user.entity";
+import {Repository} from "typeorm";
+import dayjs from "dayjs";
+import {v4 as uuid} from "uuid";
 
 @Injectable()
 export class UserService {
 
-  create(createUserDto: CreateUserDto) {
-    return "This action adds a new user";
+  constructor(
+      @InjectRepository(User)
+      private readonly userRepository: Repository<User>
+  ) {}
+
+  async create(createUserDto: CreateUserDto) {
+    createUserDto.id = uuid();
+    createUserDto.createTime = dayjs().format('YYYY-MM-DD HH:mm:ss');
+    const user = await this.userRepository.save(createUserDto);
+    return this.userRepository.save(user);
   }
 
-  findAll() {
-    return `This action returns all user`;
+  async findAll() {
+    return await this.userRepository.find();
   }
 
   findOne(id: number) {
