@@ -2,7 +2,7 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { ApiTags } from "@nestjs/swagger";
+import { ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
 
 @ApiTags('user')
 @Controller({
@@ -12,9 +12,10 @@ import { ApiTags } from "@nestjs/swagger";
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
+  @ApiOperation({summary: '创建用户'})
   @Post()
-  create(@Body() createUserDto: CreateUserDto) {
-    return this.userService.create(createUserDto);
+  create(@Body() createUser: CreateUserDto) {
+    return this.userService.create(createUser);
   }
 
   @Get()

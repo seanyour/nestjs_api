@@ -1,11 +1,9 @@
-import { Injectable } from "@nestjs/common";
+import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { CreateUserDto } from "./dto/create-user.dto";
 import { UpdateUserDto } from "./dto/update-user.dto";
 import {InjectRepository} from "@nestjs/typeorm";
 import {User} from "./entities/user.entity";
 import {Repository} from "typeorm";
-import dayjs from "dayjs";
-import {v4 as uuid} from "uuid";
 
 @Injectable()
 export class UserService {
@@ -15,11 +13,17 @@ export class UserService {
       private readonly userRepository: Repository<User>
   ) {}
 
-  async create(createUserDto: CreateUserDto) {
-    createUserDto.id = uuid();
-    createUserDto.createTime = dayjs().format('YYYY-MM-DD HH:mm:ss');
-    const user = await this.userRepository.save(createUserDto);
-    return this.userRepository.save(user);
+  async create(createUser: CreateUserDto) {
+    const {nickname} = createUser;
+    const existUser = await this.userRepository.findOne({
+      where: {nickname}
+    });
+    if (existUser){
+      throw new HttpException("用户名已存在", HttpStatus.BAD_REQUEST);
+    };
+    const newUser = await this.userRepository.create(createUser);
+    await this.userRepository.save(newUser);
+    return await this.userRepository.findOne({ where: {nickname} });
   }
 
   async findAll() {

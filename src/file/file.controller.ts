@@ -1,8 +1,9 @@
-import {Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, UploadedFile} from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, UploadedFile, Res } from "@nestjs/common";
 import { FileService } from './file.service';
 import { CreateFileDto } from './dto/create-file.dto';
 import { UpdateFileDto } from './dto/update-file.dto';
 import {FileInterceptor} from "@nestjs/platform-express";
+import { join } from "path";
 
 @Controller({
   path: 'file',
@@ -11,15 +12,15 @@ import {FileInterceptor} from "@nestjs/platform-express";
 export class FileController {
   constructor(private readonly fileService: FileService) {}
 
-  @Post()
+  @Post('upload')
   @UseInterceptors(FileInterceptor('file'))
   upload(@UploadedFile() file) {
-    console.log(file);
-    return true;
+    return file;
   }
 
-  @Get()
-  findAll() {
+  @Get('export')
+  export(@Res() res: Response) {
+    console.log(res);
     return this.fileService.findAll();
   }
 
