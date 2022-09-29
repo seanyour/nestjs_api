@@ -37,7 +37,10 @@ async function bootstrap() {
   // cors
   app.use(cors());
 
-  app.useStaticAssets(join(__dirname, 'resource'));
+  // static resource
+  app.useStaticAssets(join(__dirname, 'resource'),{
+    prefix: '/resource'
+  });
 
   await app.listen(3000);
 }

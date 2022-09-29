@@ -7,4 +7,5 @@
 - [x] cors
 - [x] @nestjs/swagger
 - [x] crypto
+- [x] multer @types/multer 上传图片
 

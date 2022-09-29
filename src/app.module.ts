@@ -4,6 +4,7 @@ import {AppService} from './app.service';
 import {UserModule} from './user/user.module';
 import {AuthModule} from './auth/auth.module';
 import {TypeOrmCoreModule} from "@nestjs/typeorm/dist/typeorm-core.module";
+import { FileModule } from './file/file.module';
 
 @Module({
     imports: [
@@ -19,7 +20,8 @@ import {TypeOrmCoreModule} from "@nestjs/typeorm/dist/typeorm-core.module";
             synchronize: true
         }),
         UserModule,
-        AuthModule
+        AuthModule,
+        FileModule,
     ],
     controllers: [AppController],
     providers: [AppService],
