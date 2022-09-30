@@ -15,9 +15,8 @@ import { FileModule } from './file/file.module';
             username: 'root',
             password: 'root',
             database: 'nestjs',
-            entities: [__dirname + '/**/*.entity{.ts,.js}'],
             autoLoadEntities: true,
-            synchronize: true
+            synchronize: false
         }),
         UserModule,
         AuthModule,

@@ -1,5 +1,6 @@
 import { BeforeInsert, Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 import {hashSync} from 'bcryptjs';
+import {Exclude} from "class-transformer";
 
 @Entity()
 export class User {
@@ -9,7 +10,8 @@ export class User {
     @Column()
     nickname: string;
 
-    @Column({select: false})
+    @Exclude()
+    @Column()
     password: string;
 
     @Column()
@@ -37,7 +39,7 @@ export class User {
     updateTime: Date;
 
     @BeforeInsert()
-    async bcryptPwd() {
+    bcryptPwd() {
         this.password = hashSync(this.password);
     }
 }

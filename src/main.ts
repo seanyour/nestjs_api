@@ -1,19 +1,30 @@
 import { NestFactory } from "@nestjs/core";
 import { AppModule } from "./app.module";
-import { VersioningType } from "@nestjs/common";
+import {VersioningType} from "@nestjs/common";
 import * as session from "express-session";
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
 import * as cors from 'cors';
 import { NestExpressApplication } from "@nestjs/platform-express";
 import { join } from "path";
+import {HttpExceptionFilter} from "./filter/http-exception.filter";
+import {TransformInterceptor} from "./interceptor/transform.interceptor";
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
+  // global router prefix
+  app.setGlobalPrefix('api');
+
+  // global filter
+  app.useGlobalFilters(new HttpExceptionFilter());
+
+  // global interceptor
+  app.useGlobalInterceptors(new TransformInterceptor())
+
   // version control
-  app.enableVersioning({
-    type: VersioningType.URI
-  });
+  // app.enableVersioning({
+  //   type: VersioningType.URI
+  // });
 
   // session
   app.use(session({

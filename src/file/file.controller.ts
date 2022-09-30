@@ -5,10 +5,7 @@ import { UpdateFileDto } from './dto/update-file.dto';
 import {FileInterceptor} from "@nestjs/platform-express";
 import { join } from "path";
 
-@Controller({
-  path: 'file',
-  version: '1'
-})
+@Controller('file')
 export class FileController {
   constructor(private readonly fileService: FileService) {}
 
@@ -19,7 +16,7 @@ export class FileController {
   }
 
   @Get('export')
-  export(@Res() res: Response) {
+  export(@Res() res) {
     console.log(res);
     return this.fileService.findAll();
   }
