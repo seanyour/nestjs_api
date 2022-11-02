@@ -29,7 +29,7 @@ async function bootstrap() {
     name: "connect.sid",
     rolling: true,
     cookie: {
-      maxAge: 999999
+      maxAge: 99999
     }
   }));
 

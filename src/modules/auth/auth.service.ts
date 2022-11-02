@@ -1,8 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { UpdateAuthDto } from "./dto/update-auth.dto";
-import * as svgCaptcha from "svg-captcha";
 import {JwtService} from "@nestjs/jwt";
-import {User} from "../user/entities/user.entity";
+import * as svgCaptcha from "svg-captcha";
 
 @Injectable()
 export class AuthService {
@@ -10,15 +9,14 @@ export class AuthService {
       private jwtService: JwtService,
   ) {}
 
-  createCaptcha() {
-    const captcha = svgCaptcha.create({
+  createCaptcha(){
+    return svgCaptcha.create({
       size: 4,
       fontSize: 50,
       width: 100,
       height: 30,
-      background: '#eee'
+      background: '#f2f2f2'
     });
-    return captcha;
   }
 
   createToken(user) {

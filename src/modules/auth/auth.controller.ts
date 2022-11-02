@@ -1,7 +1,22 @@
-import {Controller, Get, Post, Body, Patch, Param, Delete, Req, Res, Session, UseGuards, UseInterceptors, ClassSerializerInterceptor} from "@nestjs/common";
+import {
+    Controller,
+    Get,
+    Post,
+    Body,
+    Patch,
+    Param,
+    Delete,
+    Req,
+    Res,
+    Session,
+    UseGuards,
+    UseInterceptors,
+    ClassSerializerInterceptor,
+    HttpException, HttpStatus
+} from "@nestjs/common";
 import {AuthService} from './auth.service';
 import {UpdateAuthDto} from './dto/update-auth.dto';
-import {ApiBody, ApiOperation, ApiParam, ApiProperty, ApiTags} from "@nestjs/swagger";
+import { ApiOperation, ApiTags} from "@nestjs/swagger";
 import {AuthGuard} from "@nestjs/passport";
 
 
@@ -16,17 +31,21 @@ export class AuthController {
     createCaptcha(@Req() req, @Res() res, @Session() session) {
         const captcha = this.authService.createCaptcha();
         session.captcha = captcha.text;
-        res.type('image/svg+xml');
-        res.send(captcha.data);
+        res.type('image/svg+xml')
+            .send(captcha.data);
     }
 
     @ApiOperation({summary: '验证验证码'})
     @Post('verifyCaptcha')
     verifyCaptcha(@Session() session, @Body() body) {
+        console.log(session,body)
         if (session.captcha.toLocaleLowerCase() === body.captcha.toLocaleLowerCase()) {
-            return { pass: true}
+            return {
+                pass: true,
+                message: '验证码正确'
+            }
         } else {
-            return { pass: false}
+            throw new HttpException('验证码错误', HttpStatus.BAD_REQUEST)
         }
     }
 
