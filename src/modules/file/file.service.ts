@@ -4,8 +4,8 @@ import { UpdateFileDto } from './dto/update-file.dto';
 
 @Injectable()
 export class FileService {
-  create(createFileDto: CreateFileDto) {
-    return 'This action adds a new file';
+  async upload(file) {
+    return file;
   }
 
   findAll() {

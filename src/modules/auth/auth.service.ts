@@ -1,22 +1,37 @@
 import { Injectable } from "@nestjs/common";
-import { CreateAuthDto } from "./dto/create-auth.dto";
 import { UpdateAuthDto } from "./dto/update-auth.dto";
 import * as svgCaptcha from "svg-captcha";
+import {JwtService} from "@nestjs/jwt";
+import {User} from "../user/entities/user.entity";
 
 @Injectable()
 export class AuthService {
+  constructor(
+      private jwtService: JwtService,
+  ) {}
+
   createCaptcha() {
     const captcha = svgCaptcha.create({
       size: 4,
       fontSize: 50,
       width: 100,
-      height: 34
+      height: 30,
+      background: '#eee'
     });
     return captcha;
   }
 
-  create(createAuthDto: CreateAuthDto) {
-    return "This action adds a new auth";
+  createToken(user) {
+    return this.jwtService.sign(user);
+  }
+
+  async login(user){
+    const token = this.createToken({
+      id: user.id,
+      nickname: user.nickname,
+      role: user.role
+    });
+    return {...user,token};
   }
 
   findAll() {

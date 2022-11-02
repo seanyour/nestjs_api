@@ -6,20 +6,17 @@ import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
 import * as cors from 'cors';
 import { NestExpressApplication } from "@nestjs/platform-express";
 import { join } from "path";
-import {HttpExceptionFilter} from "./filter/http-exception.filter";
-import {TransformInterceptor} from "./interceptor/transform.interceptor";
+import {RequestFilter} from "./common/request.filter";
+import {ResponseInterceptor} from "./common/response.interceptor";
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
   // global router prefix
-  app.setGlobalPrefix('api');
+  // app.setGlobalPrefix('api');
 
-  // global filter
-  app.useGlobalFilters(new HttpExceptionFilter());
-
-  // global interceptor
-  app.useGlobalInterceptors(new TransformInterceptor())
+  app.useGlobalFilters(new RequestFilter());
+  app.useGlobalInterceptors(new ResponseInterceptor());
 
   // version control
   // app.enableVersioning({
@@ -38,12 +35,12 @@ async function bootstrap() {
 
   // swagger
   const config = new DocumentBuilder()
-    .setTitle('Nestjs')
+    .setTitle('Nestjs API')
     .setDescription('The Nestjs API description')
     .setVersion('1.0')
     .build();
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('swagger', app, document);
+  SwaggerModule.setup('api', app, document);
 
   // cors
   app.use(cors());

@@ -1,4 +1,4 @@
-import { BeforeInsert, Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import {BeforeInsert, BeforeUpdate, Column, Entity, PrimaryGeneratedColumn} from "typeorm";
 import {hashSync} from 'bcryptjs';
 import {Exclude} from "class-transformer";
 
@@ -8,7 +8,7 @@ export class User {
     id: string;
 
     @Column()
-    nickname: string;
+    username: string;
 
     @Exclude()
     @Column()
@@ -23,23 +23,17 @@ export class User {
     @Column('simple-enum', {enum: ['root','admin','user']})
     role: string;
 
-    @Column({default: true})
-    isActive: boolean;
+    @Column('boolean')
+    active: boolean;
 
-    @Column({
-        type: 'timestamp',
-        default: () => 'CURRENT_TIMESTAMP'
-    })
+    @Column({type: 'timestamp', default: () => 'CURRENT_TIMESTAMP'})
     createTime: Date;
 
-    @Column({
-        type: 'timestamp',
-        default: () => 'CURRENT_TIMESTAMP'
-    })
+    @Column({type: 'timestamp', default: () => 'CURRENT_TIMESTAMP'})
     updateTime: Date;
 
     @BeforeInsert()
     bcryptPwd() {
         this.password = hashSync(this.password);
-    }
+    };
 }

@@ -1,10 +1,10 @@
 import {PassportStrategy} from "@nestjs/passport";
 import {IStrategyOptions, Strategy} from "passport-local";
 import {InjectRepository} from "@nestjs/typeorm";
-import {User} from "../user/entities/user.entity";
 import {Repository} from "typeorm";
 import {BadRequestException} from "@nestjs/common";
 import {compareSync} from "bcryptjs";
+import {User} from "modules/user/entities/user.entity";
 
 
 export class LocalStrategy extends PassportStrategy(Strategy) {
@@ -13,16 +13,16 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
         private readonly userRepository: Repository<User>
     ) {
         super({
-            usernameField: 'nickname',
+            usernameField: 'username',
             passwordField: 'password',
         } as IStrategyOptions);
     }
 
-    async validate(nickname: string, password: string) {
+    async validate(username: string, password: string) {
         const user = await this.userRepository
             .createQueryBuilder('user')
             .addSelect('user.password')
-            .where('user.nickname=:nickname', {nickname})
+            .where('user.username=:username', {username})
             .getOne();
 
         if (!user) {

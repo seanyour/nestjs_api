@@ -1,7 +1,7 @@
 import {Controller, Get, Post, Body, Patch, Param, Delete, Req, Res, Session, UseGuards, UseInterceptors, ClassSerializerInterceptor} from "@nestjs/common";
 import {AuthService} from './auth.service';
 import {UpdateAuthDto} from './dto/update-auth.dto';
-import {ApiOperation, ApiTags} from "@nestjs/swagger";
+import {ApiBody, ApiOperation, ApiParam, ApiProperty, ApiTags} from "@nestjs/swagger";
 import {AuthGuard} from "@nestjs/passport";
 
 
@@ -23,17 +23,10 @@ export class AuthController {
     @ApiOperation({summary: '验证验证码'})
     @Post('verifyCaptcha')
     verifyCaptcha(@Session() session, @Body() body) {
-        console.log(session, body);
-        if (session.captcha.toLocaleLowerCase() === body?.captcha?.toLocaleLowerCase()) {
-            return {
-                status: 200,
-                message: '验证码正确'
-            }
+        if (session.captcha.toLocaleLowerCase() === body.captcha.toLocaleLowerCase()) {
+            return { pass: true}
         } else {
-            return {
-                status: 400,
-                message: '验证码正确'
-            }
+            return { pass: false}
         }
     }
 
@@ -41,8 +34,8 @@ export class AuthController {
     @UseInterceptors(ClassSerializerInterceptor)
     @UseGuards(AuthGuard('local'))
     @Post('login')
-    login(@Req() req) {
-        return req.user;
+    async login(@Req() req) {
+        return await this.authService.login(req.user);
     }
 
     @Get()

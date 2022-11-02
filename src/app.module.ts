@@ -1,22 +1,34 @@
 import {Module} from '@nestjs/common';
 import {AppController} from './app.controller';
 import {AppService} from './app.service';
-import {UserModule} from './user/user.module';
-import {AuthModule} from './auth/auth.module';
-import {TypeOrmCoreModule} from "@nestjs/typeorm/dist/typeorm-core.module";
-import { FileModule } from './file/file.module';
+import {UserModule} from './modules/user/user.module';
+import {AuthModule} from './modules/auth/auth.module';
+import {FileModule} from './modules/file/file.module';
+import {ConfigModule, ConfigService} from '@nestjs/config';
+import {TypeOrmModule} from "@nestjs/typeorm";
+import config from "../config/config";
 
 @Module({
     imports: [
-        TypeOrmCoreModule.forRoot({
-            type: 'mysql',
-            host: 'localhost',
-            port: 3306,
-            username: 'root',
-            password: 'root',
-            database: 'nestjs',
-            autoLoadEntities: true,
-            synchronize: false
+        ConfigModule.forRoot({
+            isGlobal: true,
+            load: [config]
+        }),
+        TypeOrmModule.forRootAsync({
+            imports: [ConfigModule],
+            inject: [ConfigService],
+            useFactory: (configService: ConfigService) => ({
+                type: 'mysql',
+                host: configService.get('db.host'),
+                port: configService.get('db.port'),
+                username: configService.get('db.username'),
+                password: configService.get('db.password'),
+                database: configService.get('db.database'),
+                autoLoadEntities: true,
+                synchronize: true,
+                retryDelay: 500,
+                retryAttempts: 10,
+            })
         }),
         UserModule,
         AuthModule,
@@ -25,4 +37,5 @@ import { FileModule } from './file/file.module';
     controllers: [AppController],
     providers: [AppService],
 })
-export class AppModule {};
+export class AppModule {
+};
